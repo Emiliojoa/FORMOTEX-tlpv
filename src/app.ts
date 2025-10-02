@@ -5,7 +5,7 @@ import morgan from "morgan"
 import { ConectDb } from "./database/db"
 import { MONGO_DB_CONNECTION } from "./Env/env"
 import cookieParser from "cookie-parser"
-import { userRoute } from "./routes/userRoutes"
+import { userRoute } from "./routes/user.routes"
 
 const app = express()
 

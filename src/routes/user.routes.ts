@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { createUser, loginUser } from "../controllers/userControllers";
-import { validar } from "../middleware/validation";
 export const userRoute = Router();
 
 userRoute.post("/api/register", createUser)
