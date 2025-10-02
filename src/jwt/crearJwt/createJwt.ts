@@ -1,12 +1,23 @@
-import { sign, verify, JwtPayload } from "jsonwebtoken";
-import { IUser } from "../../interfaces/user.interface";
+import jwt from 'jsonwebtoken';
+import { userId } from '../../interfaces/user.interface';
+import { JWT_SECRET } from '../../Env/env';
 
-export const createJwt = (user: IUser): string => {
-    const secret = process.env.JWT_SECRET || "default_secret";
-    return sign({ email: user.email, role: user.role }, secret, { expiresIn: '1h' });
+export const createJwt = (_id:userId):Promise<string> => {
+    return new Promise((resolve, reject) => {
+        try {
+            const payLoad = { _id };
+
+            jwt.sign(payLoad, JWT_SECRET, {
+                expiresIn: '1h'
+            }, (err, token) => {
+                if (err) {
+                    reject('No se pudo generar el token');
+                } else {
+                    resolve(token);
+                }
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    });
 };
-
-export const verifyJwt = (token: string): JwtPayload | string => {
-    const secret = process.env.JWT_SECRET || "default_secret";
-    return verify(token, secret);
-}

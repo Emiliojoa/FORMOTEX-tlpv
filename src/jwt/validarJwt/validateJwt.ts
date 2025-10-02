@@ -1,13 +1,24 @@
+import jwt from 'jsonwebtoken';
+import { Request, Response, NextFunction } from 'express';
+import { userModel } from '../../models/userModel';
+import { JWT_SECRET } from '../../Env/env';
 
-import { verify } from "jsonwebtoken";
-
-
-export const validateJwt = (token: string): boolean => {
+export const validarJwt = async (req: Request, res:Response, next:NextFunction): Promise<void> => {
     try {
-        const secret = process.env.JWT_SECRET || "default_secret";
-        const decoded = verify(token, secret);
-        return !!decoded;
+        const token = req.cookies.token;
+        if (!token) {
+            res.status(401).json('No se encontró el token');
+        }
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const user = await userModel.findById(decoded._id);
+        if (!user) {
+            res.status(401).json('Token invalido');
+        }
+        req.user = user;
+        next();
     } catch (error) {
-        return false;
+        res.status(500).json({
+            message: 'Error en el servidor'
+        });
     }
 };
